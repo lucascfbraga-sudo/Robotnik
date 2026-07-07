@@ -28,8 +28,5 @@ export async function apiFootball<T>(
   }
 
   const json = (await res.json()) as ApiFootballResponse<T>;
-  if (json.errors && !Array.isArray(json.errors) && Object.keys(json.errors as object).length > 0) {
-    throw new Error(`API-Football: ${JSON.stringify(json.errors)}`);
-  }
   return json.response;
 }

@@ -1,59 +1,32 @@
-import { Outlet, createRootRouteWithContext, HeadContent, Scripts, useRouter } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, HeadContent, Scripts, Link } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import { useAuth, type AuthState } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
-
+import { SearchBar } from "@/components/SearchBar";
+import { Trophy } from "lucide-react";
 
 import appCss from "../styles.css?url";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 30,
-      retry: 1,
-    },
-  },
-});
-
 interface RouterContext {
-  auth: AuthState;
+  queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    return {
-      auth: {
-        isAuthenticated: !!session,
-        user: session?.user ?? null,
-        session,
-        isLoading: false,
-      } as AuthState,
-    };
-  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Inspo — Visual mood boards" },
-      { name: "description", content: "Collect, organize, and share visual inspiration on a spatial canvas." },
-      { name: "author", content: "Inspo" },
-      { property: "og:title", content: "Inspo — Visual mood boards" },
-      { property: "og:description", content: "Collect, organize, and share visual inspiration on a spatial canvas." },
+      { title: "StatBall — Estatísticas de futebol" },
+      { name: "description", content: "Selecione qualquer time e veja os últimos 20 jogos com estatísticas completas: chutes, escanteios, cartões, faltas, laterais e mais." },
+      { property: "og:title", content: "StatBall — Estatísticas avançadas de futebol" },
+      { property: "og:description", content: "Estatísticas completas de partidas de futebol. Chutes, escanteios, cartões, faltas e muito mais." },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Inspo — Visual mood boards" },
-      { name: "twitter:description", content: "Collect, organize, and share visual inspiration on a spatial canvas." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/b9uXYmgdTyWTYhHfslbu4ZrHRZ73/social-images/social-1775640592663-inspo.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/b9uXYmgdTyWTYhHfslbu4ZrHRZ73/social-images/social-1775640592663-inspo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -62,7 +35,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR" className="dark">
       <head>
         <HeadContent />
       </head>
@@ -75,19 +48,34 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const router = useRouter();
-  const auth = useAuth();
-
-  // When auth state changes, invalidate the router so beforeLoad re-runs
-  useEffect(() => {
-    router.invalidate();
-  }, [auth.isAuthenticated, router]);
-
+  const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <Toaster position="bottom-right" />
-      
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main>
+          <Outlet />
+        </main>
+      </div>
+      <Toaster position="bottom-right" theme="dark" />
     </QueryClientProvider>
+  );
+}
+
+function Header() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
+            <Trophy className="h-5 w-5" strokeWidth={2.5} />
+          </div>
+          <span className="text-lg font-bold tracking-tight">StatBall</span>
+        </Link>
+        <div className="flex-1 max-w-xl">
+          <SearchBar />
+        </div>
+      </div>
+    </header>
   );
 }

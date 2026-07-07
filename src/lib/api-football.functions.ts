@@ -61,9 +61,10 @@ export const getTeam = createServerFn({ method: "GET" })
     return res[0];
   });
 
-// Free plan doesn't support `last`; we pull the most recent covered season
-// (2021-2023 on free) and slice the N latest played matches client-side.
-const FREE_SEASONS = [2023, 2022, 2021];
+// Try most recent seasons first. Football seasons span two years, so around
+// mid-year both the finishing season (N-1) and the starting one (N) can have
+// played matches. We collect from newest to oldest until we have enough.
+const RECENT_SEASONS = [2026, 2025, 2024, 2023, 2022, 2021];
 
 export const getLastFixtures = createServerFn({ method: "GET" })
   .inputValidator((d: { teamId: number; last?: number }) =>
@@ -72,14 +73,23 @@ export const getLastFixtures = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { apiFootball } = await import("./api-football.server");
     const limit = data.last ?? 20;
+    const now = Date.now();
     const collected: Fixture[] = [];
-    for (const season of FREE_SEASONS) {
-      const chunk = await apiFootball<Fixture[]>("/fixtures", { team: data.teamId, season });
-      collected.push(...chunk);
-      if (collected.length >= limit) break;
+    for (const season of RECENT_SEASONS) {
+      try {
+        const chunk = await apiFootball<Fixture[]>("/fixtures", { team: data.teamId, season });
+        collected.push(...chunk);
+      } catch {
+        // Season not available on this plan — skip and try older ones.
+        continue;
+      }
+      const playedSoFar = collected.filter(
+        (f) => ["FT", "AET", "PEN"].includes(f.fixture.status.short) && new Date(f.fixture.date).getTime() <= now,
+      ).length;
+      if (playedSoFar >= limit) break;
     }
     return collected
-      .filter((f) => ["FT", "AET", "PEN"].includes(f.fixture.status.short))
+      .filter((f) => ["FT", "AET", "PEN"].includes(f.fixture.status.short) && new Date(f.fixture.date).getTime() <= now)
       .sort((a, b) => new Date(b.fixture.date).getTime() - new Date(a.fixture.date).getTime())
       .slice(0, limit);
   });

@@ -61,13 +61,27 @@ export const getTeam = createServerFn({ method: "GET" })
     return res[0];
   });
 
+// Free plan doesn't support `last`; we pull the most recent covered season
+// (2021-2023 on free) and slice the N latest played matches client-side.
+const FREE_SEASONS = [2023, 2022, 2021];
+
 export const getLastFixtures = createServerFn({ method: "GET" })
   .inputValidator((d: { teamId: number; last?: number }) =>
     z.object({ teamId: z.number().int().positive(), last: z.number().int().min(1).max(50).optional() }).parse(d),
   )
   .handler(async ({ data }) => {
     const { apiFootball } = await import("./api-football.server");
-    return apiFootball<Fixture[]>("/fixtures", { team: data.teamId, last: data.last ?? 20 });
+    const limit = data.last ?? 20;
+    const collected: Fixture[] = [];
+    for (const season of FREE_SEASONS) {
+      const chunk = await apiFootball<Fixture[]>("/fixtures", { team: data.teamId, season });
+      collected.push(...chunk);
+      if (collected.length >= limit) break;
+    }
+    return collected
+      .filter((f) => ["FT", "AET", "PEN"].includes(f.fixture.status.short))
+      .sort((a, b) => new Date(b.fixture.date).getTime() - new Date(a.fixture.date).getTime())
+      .slice(0, limit);
   });
 
 export const getFixture = createServerFn({ method: "GET" })

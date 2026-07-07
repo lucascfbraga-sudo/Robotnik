@@ -18,7 +18,8 @@ export const Route = createFileRoute("/team/$teamId")({
 function TeamPage() {
   const { teamId } = Route.useParams();
   const teamFn = useServerFn(getTeam);
-  const fixturesFn = useServerFn(getLastFixtures);
+  const lastFn = useServerFn(getLastFixtures);
+  const nextFn = useServerFn(getNextFixtures);
 
   const teamQ = useQuery({
     queryKey: ["team", teamId],
@@ -26,9 +27,15 @@ function TeamPage() {
     staleTime: 1000 * 60 * 60,
   });
 
-  const fixturesQ = useQuery({
-    queryKey: ["fixtures", teamId],
-    queryFn: () => fixturesFn({ data: { teamId } }),
+  const lastQ = useQuery({
+    queryKey: ["fixtures-last", teamId],
+    queryFn: () => lastFn({ data: { teamId } }),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const nextQ = useQuery({
+    queryKey: ["fixtures-next", teamId],
+    queryFn: () => nextFn({ data: { teamId } }),
     staleTime: 1000 * 60 * 5,
   });
 

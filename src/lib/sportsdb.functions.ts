@@ -165,12 +165,22 @@ export const getLastFixtures = createServerFn({ method: "GET" })
   .inputValidator((d: { teamId: string }) => z.object({ teamId: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
     const { sportsdb } = await import("./sportsdb.server");
-    // Free key returns the last 5 played matches for the team.
     const res = await sportsdb<{ results: RawEvent[] | null } | null>("/eventslast.php", { id: data.teamId });
     const events = res?.results ?? [];
     return events
       .map(mapFixture)
       .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  });
+
+export const getNextFixtures = createServerFn({ method: "GET" })
+  .inputValidator((d: { teamId: string }) => z.object({ teamId: z.string().min(1) }).parse(d))
+  .handler(async ({ data }) => {
+    const { sportsdb } = await import("./sportsdb.server");
+    const res = await sportsdb<{ events: RawEvent[] | null } | null>("/eventsnext.php", { id: data.teamId });
+    const events = res?.events ?? [];
+    return events
+      .map(mapFixture)
+      .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
   });
 
 export const getFixture = createServerFn({ method: "GET" })

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getTeam, getLastFixtures, type Fixture } from "@/lib/sportsdb.functions";
+import { getTeam, getLastFixtures, getNextFixtures, type Fixture } from "@/lib/sportsdb.functions";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/team/$teamId")({
@@ -18,7 +18,8 @@ export const Route = createFileRoute("/team/$teamId")({
 function TeamPage() {
   const { teamId } = Route.useParams();
   const teamFn = useServerFn(getTeam);
-  const fixturesFn = useServerFn(getLastFixtures);
+  const lastFn = useServerFn(getLastFixtures);
+  const nextFn = useServerFn(getNextFixtures);
 
   const teamQ = useQuery({
     queryKey: ["team", teamId],
@@ -26,9 +27,15 @@ function TeamPage() {
     staleTime: 1000 * 60 * 60,
   });
 
-  const fixturesQ = useQuery({
-    queryKey: ["fixtures", teamId],
-    queryFn: () => fixturesFn({ data: { teamId } }),
+  const lastQ = useQuery({
+    queryKey: ["fixtures-last", teamId],
+    queryFn: () => lastFn({ data: { teamId } }),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const nextQ = useQuery({
+    queryKey: ["fixtures-next", teamId],
+    queryFn: () => nextFn({ data: { teamId } }),
     staleTime: 1000 * 60 * 5,
   });
 
@@ -70,27 +77,41 @@ function TeamPage() {
         ) : null}
       </header>
 
-      <section>
+      <section className="mb-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold tracking-tight">Últimos jogos</h2>
-          <span className="text-xs text-muted-foreground">Clique em um jogo para ver as estatísticas</span>
+          <h2 className="text-xl font-bold tracking-tight">Último jogo</h2>
+          <span className="text-xs text-muted-foreground">Clique para ver as estatísticas</span>
         </div>
-
-        {fixturesQ.isLoading ? (
+        {lastQ.isLoading ? (
+          <div className="skeleton h-20 rounded-2xl" />
+        ) : lastQ.data && lastQ.data.length > 0 ? (
           <div className="space-y-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="skeleton h-20 rounded-2xl" />
-            ))}
-          </div>
-        ) : fixturesQ.data && fixturesQ.data.length > 0 ? (
-          <div className="space-y-2">
-            {fixturesQ.data.map((f) => (
+            {lastQ.data.map((f) => (
               <FixtureRow key={f.id} fixture={f} teamId={teamId} />
             ))}
           </div>
         ) : (
           <div className="rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground">
-            Nenhum jogo encontrado.
+            Nenhum jogo recente encontrado.
+          </div>
+        )}
+      </section>
+
+      <section>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold tracking-tight">Próximo jogo</h2>
+        </div>
+        {nextQ.isLoading ? (
+          <div className="skeleton h-20 rounded-2xl" />
+        ) : nextQ.data && nextQ.data.length > 0 ? (
+          <div className="space-y-2">
+            {nextQ.data.map((f) => (
+              <FixtureRow key={f.id} fixture={f} teamId={teamId} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground">
+            Nenhum jogo agendado.
           </div>
         )}
       </section>

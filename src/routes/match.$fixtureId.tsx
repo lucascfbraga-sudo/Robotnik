@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getFixture, type FixtureStat, type FixtureEvent } from "@/lib/api-football.functions";
-import { Calendar, MapPin, Whistle, ArrowLeft, Goal, RectangleVertical, RefreshCw } from "lucide-react";
+import { Calendar, MapPin, Flag as Whistle, ArrowLeft, Goal, RectangleVertical, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/match/$fixtureId")({
   component: MatchPage,

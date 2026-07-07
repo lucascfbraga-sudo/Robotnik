@@ -187,17 +187,40 @@ export const getFixture = createServerFn({ method: "GET" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
     const { sportsdb } = await import("./sportsdb.server");
-    const [detail, stats] = await Promise.all([
-      sportsdb<{ events: RawEvent[] | null } | null>("/lookupevent.php", { id: data.id }),
-      sportsdb<{ eventstats: RawEventStat[] | null } | null>("/lookupeventstats.php", { id: data.id }),
-    ]);
-    const ev = detail?.events?.[0];
+
+    // Lookup event with one retry — the free `123` key occasionally returns
+    // an empty body under load.
+    let ev: RawEvent | undefined;
+    for (let attempt = 0; attempt < 2 && !ev; attempt++) {
+      try {
+        const detail = await sportsdb<{ events: RawEvent[] | null } | null>(
+          "/lookupevent.php",
+          { id: data.id },
+        );
+        ev = detail?.events?.[0];
+      } catch {
+        // swallow and retry
+      }
+      if (!ev && attempt === 0) await new Promise((r) => setTimeout(r, 300));
+    }
     if (!ev) throw new Error("Partida não encontrada");
-    const fixture = mapFixture(ev);
-    const statistics: MatchStat[] = (stats?.eventstats ?? []).map((s) => ({
-      label: s.strStat,
-      home: s.intHome != null ? Number(s.intHome) : null,
-      away: s.intAway != null ? Number(s.intAway) : null,
-    }));
-    return { fixture, statistics };
+
+    // Stats are optional — never fail the whole request because of them
+    // (future matches and many leagues have no stats on TheSportsDB).
+    let statistics: MatchStat[] = [];
+    try {
+      const stats = await sportsdb<{ eventstats: RawEventStat[] | null } | null>(
+        "/lookupeventstats.php",
+        { id: data.id },
+      );
+      statistics = (stats?.eventstats ?? []).map((s) => ({
+        label: s.strStat,
+        home: s.intHome != null ? Number(s.intHome) : null,
+        away: s.intAway != null ? Number(s.intAway) : null,
+      }));
+    } catch {
+      statistics = [];
+    }
+
+    return { fixture: mapFixture(ev), statistics };
   });

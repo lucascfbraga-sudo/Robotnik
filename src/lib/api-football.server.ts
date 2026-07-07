@@ -27,7 +27,8 @@ export async function apiFootball<T>(
     throw new Error(`API-Football ${res.status}: ${body.slice(0, 200)}`);
   }
 
-  const json = (await res.json()) as ApiFootballResponse<T>;
+  const json = (await res.json()) as ApiFootballResponse<T> & { results?: number; paging?: unknown };
+  console.log("[api-football]", path, JSON.stringify(params), "results=", json.results, "errors=", JSON.stringify(json.errors));
   if (json.errors && !Array.isArray(json.errors) && Object.keys(json.errors as object).length > 0) {
     throw new Error(`API-Football: ${JSON.stringify(json.errors)}`);
   }

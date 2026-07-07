@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getTeam, getLastFixtures, type Fixture } from "@/lib/sportsdb.functions";
+import { getTeam, getLastFixtures, getNextFixtures, type Fixture } from "@/lib/sportsdb.functions";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/team/$teamId")({

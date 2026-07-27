@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Search, Loader2 } from "lucide-react";
-import { searchTeams } from "@/lib/sportsdb.functions";
+import { searchTeams } from "@/lib/api-football.functions";
 
 export function SearchBar() {
   const [q, setQ] = useState("");
@@ -55,24 +55,18 @@ export function SearchBar() {
           {data && data.length > 0 ? (
             data.slice(0, 12).map((t) => (
               <button
-                key={t.id}
+                key={t.team.id}
                 onClick={() => {
                   setOpen(false);
                   setQ("");
-                  navigate({ to: "/team/$teamId", params: { teamId: t.id } });
+                  navigate({ to: "/team/$teamId", params: { teamId: String(t.team.id) } });
                 }}
                 className="flex w-full items-center gap-3 border-b border-border/50 px-3 py-2.5 text-left hover:bg-accent transition last:border-b-0"
               >
-                {t.badge ? (
-                  <img src={t.badge} alt="" className="h-8 w-8 shrink-0 object-contain" />
-                ) : (
-                  <div className="h-8 w-8 shrink-0 rounded bg-secondary" />
-                )}
+                <img src={t.team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-foreground">{t.name}</div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {[t.country, t.league].filter(Boolean).join(" · ") || "—"}
-                  </div>
+                  <div className="truncate text-sm font-semibold text-foreground">{t.team.name}</div>
+                  <div className="truncate text-xs text-muted-foreground">{t.team.country}</div>
                 </div>
               </button>
             ))

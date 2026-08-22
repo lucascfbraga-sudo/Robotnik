@@ -1,29 +1,21 @@
+# Plan: Poke Idle Prototype
 
+Build a game prototype inspired by `poke.idleworld` to demonstrate 2D engine capabilities using React, Konva.js, and Tailwind.
 
-## Add 6 new landing page images in an outer ring
+## User Interface
+- **2D Game Canvas**: Tile-based volcanic map rendering.
+- **Sprites**: Interactive creature sprites (placeholders for Golem, Charizard).
+- **Capture Sidebar**: UI panel matching the uploaded screenshot style (dark, rounded, gold accents).
+- **HUD**: Top info bar for currency and player stats.
 
-### Steps
+## Technical Details
+- **Engine**: `react-konva` for high-performance 2D rendering.
+- **State**: Reactive game loop for creature movement and UI updates.
+- **Assets**: Use CSS patterns and emoji/lucide-icons as placeholders initially, or generic pixel-art URLs if available.
+- **Theme**: Deep dark palette matching the screenshot's capture panel.
 
-1. **Create 6 asset files** — Upload each of the 6 new images via `assets--create_asset` to `src/assets/landing-8.jpeg` through `src/assets/landing-13.jpeg`.
-
-2. **Update `src/routes/index.tsx`** — Add 6 new imports and 6 new entries to `DEMO_IMAGES` with positions further from center than the existing ring. Approximate positions for the outer scatter:
-
-```text
-Existing range: roughly x: -700 to +500, y: -510 to +410
-New images placed at x: -900 to +750, y: -650 to +600
-```
-
-Proposed positions (will use varied sizes similar to existing images):
-- id 8: x: -920, y: -500, ~260x260 (fashion couple — top-left outer)
-- id 9: x: 650, y: -500, ~280x280 (abstract orange — top-right outer)
-- id 10: x: -880, y: 350, ~290x290 (woman laptop — bottom-left outer)
-- id 11: x: 600, y: 400, ~250x330 (man boxes — bottom-right outer)
-- id 12: x: -350, y: -700, ~270x400 (water lilies — top-center outer)
-- id 13: x: 450, y: 500, ~240x400 (fashion crosswalk — bottom-right far)
-
-### Technical details
-
-- **Files changed**: `src/routes/index.tsx` only (plus 6 new `.asset.json` files created by the asset tool)
-- No database or backend changes needed
-- Images will be visible on larger screens when users pan or zoom slightly; they sit just outside the initial viewport ring
-
+## Steps
+1. Create `src/components/game/GameCanvas.tsx` using Konva.
+2. Create `src/components/game/CaptureSidebar.tsx` for the UI.
+3. Replace `src/routes/index.tsx` with the game interface.
+4. Add basic game loop (random movement for sprites).

@@ -27,22 +27,23 @@ function HomePage() {
           </div>
           
           <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500/20 text-yellow-500">
-              <Zap className="h-5 w-5" />
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500/20 text-yellow-500">
+                <Zap className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">Energia</div>
+                <div className="text-sm font-bold">4.2k / 5.0k</div>
+              </div>
             </div>
-            <div>
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">Energia</div>
-              <div className="text-sm font-bold">4.2k / 5.0k</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-500">
-              <Coins className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">Moedas</div>
-              <div className="text-sm font-bold">1.2M</div>
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-500">
+                <Coins className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">Moedas</div>
+                <div className="text-sm font-bold">1.2M</div>
+              </div>
             </div>
           </div>
         </div>

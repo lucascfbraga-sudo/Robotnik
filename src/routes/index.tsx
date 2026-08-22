@@ -18,7 +18,15 @@ function HomePage() {
     <div className="relative h-screen w-screen overflow-hidden bg-[#0d1117] text-white font-sans">
       {/* HUD Superior */}
       <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between border-b border-[#1a202c] bg-[#0d1117]/80 px-6 py-3 backdrop-blur-md">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)]">
+              <Zap className="h-5 w-5 fill-white" />
+            </div>
+            <span className="text-lg font-black tracking-tighter uppercase italic">PokeIdle</span>
+          </div>
+          
+          <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500/20 text-yellow-500">
               <Zap className="h-5 w-5" />

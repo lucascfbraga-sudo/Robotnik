@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GameCanvas } from "@/components/game/GameCanvas";
 import { CaptureSidebar } from "@/components/game/CaptureSidebar";
+import { SellHud } from "@/components/game/SellHud";
 import { Zap, Coins, Users, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -69,7 +70,8 @@ function HomePage() {
       </main>
 
       {/* Interface Lateral Direita */}
-      <aside className="absolute top-20 right-6 z-20">
+      <aside className="absolute top-20 right-6 z-20 flex flex-col gap-4">
+        <SellHud />
         <CaptureSidebar />
       </aside>
 

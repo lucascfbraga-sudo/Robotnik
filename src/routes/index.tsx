@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GameCanvas } from "@/components/game/GameCanvas";
 import { CaptureSidebar } from "@/components/game/CaptureSidebar";
+import { SellHud } from "@/components/game/SellHud";
 import { Zap, Coins, Users, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/")({

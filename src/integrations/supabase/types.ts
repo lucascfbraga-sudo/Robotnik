@@ -7,109 +7,87 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      board_items: {
-        Row: {
-          board_id: string
-          created_at: string
-          height: number
-          id: string
-          image_url: string | null
-          metadata: Json | null
-          notes: string | null
-          rotation: number
-          source_url: string | null
-          tags: string[] | null
-          type: string
-          user_id: string | null
-          width: number
-          x: number
-          y: number
-          z_index: number
-        }
-        Insert: {
-          board_id: string
-          created_at?: string
-          height?: number
-          id?: string
-          image_url?: string | null
-          metadata?: Json | null
-          notes?: string | null
-          rotation?: number
-          source_url?: string | null
-          tags?: string[] | null
-          type?: string
-          user_id?: string | null
-          width?: number
-          x?: number
-          y?: number
-          z_index?: number
-        }
-        Update: {
-          board_id?: string
-          created_at?: string
-          height?: number
-          id?: string
-          image_url?: string | null
-          metadata?: Json | null
-          notes?: string | null
-          rotation?: number
-          source_url?: string | null
-          tags?: string[] | null
-          type?: string
-          user_id?: string | null
-          width?: number
-          x?: number
-          y?: number
-          z_index?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "board_items_board_id_fkey"
-            columns: ["board_id"]
-            isOneToOne: false
-            referencedRelation: "boards"
-            referencedColumns: ["id"]
-          },
-        ]
+      profiles: {
+        Row: { id: string; full_name: string | null; email: string | null; blocked: boolean; created_at: string; updated_at: string }
+        Insert: { id: string; full_name?: string | null; email?: string | null; blocked?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; full_name?: string | null; email?: string | null; blocked?: boolean; created_at?: string; updated_at?: string }
+        Relationships: []
       }
-      boards: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          sort_order: number
-          thumbnail_url: string | null
-          title: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          sort_order?: number
-          thumbnail_url?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          sort_order?: number
-          thumbnail_url?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+      user_roles: {
+        Row: { id: string; user_id: string; role: "admin" | "cliente" }
+        Insert: { id?: string; user_id: string; role: "admin" | "cliente" }
+        Update: { id?: string; user_id?: string; role?: "admin" | "cliente" }
+        Relationships: []
+      }
+      plans: {
+        Row: { id: string; name: string; description: string | null; duration_days: number; price: number; published: boolean; display_order: number; created_at: string; updated_at: string }
+        Insert: { id?: string; name: string; description?: string | null; duration_days: number; price?: number; published?: boolean; display_order?: number; created_at?: string; updated_at?: string }
+        Update: { id?: string; name?: string; description?: string | null; duration_days?: number; price?: number; published?: boolean; display_order?: number; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      orders: {
+        Row: { id: string; user_id: string; plan_id: string | null; amount: number; status: string; delivery_status: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id: string; plan_id?: string | null; amount: number; status?: string; delivery_status?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string; plan_id?: string | null; amount?: number; status?: string; delivery_status?: string; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      payments: {
+        Row: { id: string; order_id: string; user_id: string; provider: string; provider_payment_id: string | null; method: string | null; status: string; amount: number; raw_payload: Json | null; created_at: string; updated_at: string }
+        Insert: { id?: string; order_id: string; user_id: string; provider?: string; provider_payment_id?: string | null; method?: string | null; status?: string; amount: number; raw_payload?: Json | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; order_id?: string; user_id?: string; provider?: string; provider_payment_id?: string | null; method?: string | null; status?: string; amount?: number; raw_payload?: Json | null; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: { id: string; user_id: string; plan_id: string | null; order_id: string | null; status: string; started_at: string; expires_at: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id: string; plan_id?: string | null; order_id?: string | null; status?: string; started_at?: string; expires_at: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string; plan_id?: string | null; order_id?: string | null; status?: string; started_at?: string; expires_at?: string; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      subscription_renewals: {
+        Row: { id: string; subscription_id: string; order_id: string | null; previous_expires_at: string | null; new_expires_at: string; days_added: number; created_at: string }
+        Insert: { id?: string; subscription_id: string; order_id?: string | null; previous_expires_at?: string | null; new_expires_at: string; days_added: number; created_at?: string }
+        Update: { id?: string; subscription_id?: string; order_id?: string | null; previous_expires_at?: string | null; new_expires_at?: string; days_added?: number; created_at?: string }
+        Relationships: []
+      }
+      license_keys: {
+        Row: { id: string; key_value: string; duration_days: number; status: string; order_id: string | null; user_id: string | null; delivered_at: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; key_value: string; duration_days: number; status?: string; order_id?: string | null; user_id?: string | null; delivered_at?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; key_value?: string; duration_days?: number; status?: string; order_id?: string | null; user_id?: string | null; delivered_at?: string | null; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      key_deliveries: {
+        Row: { id: string; license_key_id: string; order_id: string; user_id: string; delivered_at: string; created_at: string }
+        Insert: { id?: string; license_key_id: string; order_id: string; user_id: string; delivered_at?: string; created_at?: string }
+        Update: { id?: string; license_key_id?: string; order_id?: string; user_id?: string; delivered_at?: string; created_at?: string }
+        Relationships: []
+      }
+      payment_events: {
+        Row: { id: string; payment_id: string | null; order_id: string | null; provider: string; provider_event_id: string | null; event_type: string; payload: Json | null; processed: boolean; created_at: string }
+        Insert: { id?: string; payment_id?: string | null; order_id?: string | null; provider: string; provider_event_id?: string | null; event_type: string; payload?: Json | null; processed?: boolean; created_at?: string }
+        Update: { id?: string; payment_id?: string | null; order_id?: string | null; provider?: string; provider_event_id?: string | null; event_type?: string; payload?: Json | null; processed?: boolean; created_at?: string }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: { id: string; actor_id: string | null; action: string; entity_type: string | null; entity_id: string | null; details: Json | null; created_at: string }
+        Insert: { id?: string; actor_id?: string | null; action: string; entity_type?: string | null; entity_id?: string | null; details?: Json | null; created_at?: string }
+        Update: { id?: string; actor_id?: string | null; action?: string; entity_type?: string | null; entity_id?: string | null; details?: Json | null; created_at?: string }
+        Relationships: []
+      }
+      site_settings: {
+        Row: { id: string; key: string; value: Json; updated_at: string }
+        Insert: { id?: string; key: string; value?: Json; updated_at?: string }
+        Update: { id?: string; key?: string; value?: Json; updated_at?: string }
+        Relationships: []
+      }
+      faq_items: {
+        Row: { id: string; question: string; answer: string; display_order: number; published: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; question: string; answer: string; display_order?: number; published?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; question?: string; answer?: string; display_order?: number; published?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
     }
@@ -117,10 +95,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: { _user_id: string; _role: "admin" | "cliente" }
+        Returns: boolean
+      }
+      admin_mark_payment_status: {
+        Args: { p_order_id: string; p_new_status: string; p_reason: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "cliente"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -247,6 +232,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "cliente"],
+    },
   },
 } as const

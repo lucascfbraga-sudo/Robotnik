@@ -1,8 +1,8 @@
 import { Outlet, createRootRouteWithContext, HeadContent, Scripts, Link } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import { SearchBar } from "@/components/SearchBar";
-import { Trophy } from "lucide-react";
+import { useAuth } from "@/lib/useAuth";
+import { Bot } from "lucide-react";
 
 import appCss from "../styles.css?url";
 
@@ -15,10 +15,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "StatBall — Estatísticas de futebol" },
-      { name: "description", content: "Selecione qualquer time e veja os últimos 20 jogos com estatísticas completas: chutes, escanteios, cartões, faltas, laterais e mais." },
-      { property: "og:title", content: "StatBall — Estatísticas avançadas de futebol" },
-      { property: "og:description", content: "Estatísticas completas de partidas de futebol. Chutes, escanteios, cartões, faltas e muito mais." },
+      { title: "ROBOTNIK — Bot de automação para Poke Alliance" },
+      { name: "description", content: "Assine o ROBOTNIK, o bot oficial de automação para Poke Alliance. Planos de acesso, chaves de ativação automáticas e painel completo da sua assinatura." },
+      { property: "og:title", content: "ROBOTNIK — Bot de automação para Poke Alliance" },
+      { property: "og:description", content: "Assine o ROBOTNIK, receba sua chave automaticamente e acompanhe sua assinatura em um painel completo." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -63,18 +63,22 @@ function RootComponent() {
 }
 
 function Header() {
+  const { session } = useAuth();
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
-            <Trophy className="h-5 w-5" strokeWidth={2.5} />
+            <Bot className="h-5 w-5" strokeWidth={2.5} />
           </div>
-          <span className="text-lg font-bold tracking-tight">StatBall</span>
+          <span className="text-lg font-bold tracking-tight">ROBOTNIK</span>
         </Link>
-        <div className="flex-1 max-w-xl">
-          <SearchBar />
-        </div>
+        <Link
+          to={session ? "/app" : "/auth"}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-secondary"
+        >
+          {session ? "Ir para o painel" : "Entrar"}
+        </Link>
       </div>
     </header>
   );

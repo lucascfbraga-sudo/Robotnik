@@ -33,7 +33,17 @@ interface PlanRow {
   duration_days: number;
   price: number;
   display_order: number;
+  available: boolean;
 }
+
+const DURATION_ICON: Record<number, string> = {
+  1: "⏱️",
+  3: "🔥",
+  7: "📅",
+  15: "📆",
+  30: "🌙",
+  90: "🚀",
+};
 
 function HomePage() {
   const { session } = useAuth();
@@ -43,7 +53,7 @@ function HomePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("plans")
-        .select("id,name,description,duration_days,price,display_order")
+        .select("id,name,description,duration_days,price,display_order,available")
         .eq("published", true)
         .order("display_order", { ascending: true });
       if (error) throw error;
@@ -134,33 +144,53 @@ function HomePage() {
           </div>
         ) : (
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            {plans.map((p, i) => (
-              <div
-                key={p.id}
-                className={`relative flex flex-col rounded-2xl border p-6 ${i === 1 ? "border-[color:var(--warning)]/60 bg-card shadow-xl shadow-primary/10 ring-1 ring-[color:var(--warning)]/30" : "border-border bg-card/60"}`}
-              >
-                {i === 1 && (
-                  <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-[color:var(--warning)] px-3 py-1 text-[10px] font-bold uppercase text-[color:var(--warning-foreground)]">
-                    <Crown className="h-3 w-3" /> Mais popular
-                  </span>
-                )}
-                <h3 className="text-lg font-bold">{p.name}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{p.duration_days} dias de acesso</p>
-                <div className="mt-5 text-3xl font-extrabold">{formatBRL(p.price)}</div>
-                <p className="mt-3 text-sm text-muted-foreground">{p.description ?? "Acesso completo ao bot ROBOTNIK."}</p>
-                <ul className="mt-5 space-y-2 text-sm">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Chave de {p.duration_days} dias</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Suporte via Discord</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Atualizações incluídas</li>
-                </ul>
-                <Link
-                  to={session ? "/app" : "/auth"}
-                  className={`mt-6 inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-bold transition ${i === 1 ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-border bg-secondary/60 text-foreground hover:bg-secondary"}`}
+            {plans.map((p) => {
+              const highlighted = p.duration_days === 90;
+              const icon = DURATION_ICON[p.duration_days] ?? "⚡";
+              return (
+                <div
+                  key={p.id}
+                  className={`relative flex flex-col rounded-2xl border p-6 ${highlighted ? "border-[color:var(--warning)]/60 bg-card shadow-xl shadow-primary/10 ring-1 ring-[color:var(--warning)]/30" : "border-border bg-card/60"} ${!p.available ? "opacity-70" : ""}`}
                 >
-                  <ShieldCheck className="h-4 w-4" /> Assinar {p.name}
-                </Link>
-              </div>
-            ))}
+                  {highlighted && (
+                    <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-[color:var(--warning)] px-3 py-1 text-[10px] font-bold uppercase text-[color:var(--warning-foreground)]">
+                      <Crown className="h-3 w-3" /> Destaque do trimestral
+                    </span>
+                  )}
+                  <h3 className="flex items-center gap-2 text-lg font-bold">
+                    <span aria-hidden="true">{icon}</span> {p.name}
+                  </h3>
+                  <p className="mt-1 text-xs text-muted-foreground">{p.duration_days} dias de acesso</p>
+                  <div className="mt-5 text-3xl font-extrabold">
+                    {p.available ? formatBRL(p.price) : <span className="text-2xl text-muted-foreground">Indisponível</span>}
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">{p.description ?? "Acesso completo ao bot ROBOTNIK."}</p>
+                  {highlighted && (
+                    <div className="mt-4 rounded-lg border border-[color:var(--warning)]/40 bg-[color:var(--warning)]/10 p-3 text-xs text-foreground">
+                      <p>Equivale a <strong>R$ 90,00</strong> por mês.</p>
+                      <p className="mt-1 text-muted-foreground">Você economiza <strong className="text-foreground">R$ 60,00</strong> em relação a três mensalidades de R$ 110,00.</p>
+                    </div>
+                  )}
+                  <ul className="mt-5 space-y-2 text-sm">
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Chave de {p.duration_days} dias</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Suporte via Discord</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Atualizações incluídas</li>
+                  </ul>
+                  {p.available ? (
+                    <Link
+                      to={session ? "/app" : "/auth"}
+                      className={`mt-6 inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-bold transition ${highlighted ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-border bg-secondary/60 text-foreground hover:bg-secondary"}`}
+                    >
+                      <ShieldCheck className="h-4 w-4" /> Assinar {p.name}
+                    </Link>
+                  ) : (
+                    <span className="mt-6 inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-border bg-secondary/30 px-5 py-3 text-sm font-bold text-muted-foreground">
+                      <ShieldCheck className="h-4 w-4" /> Em breve
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </section>

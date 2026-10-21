@@ -140,7 +140,7 @@ function HomePage() {
                 className={`relative flex flex-col rounded-2xl border p-6 ${i === 1 ? "border-[color:var(--warning)]/60 bg-card shadow-xl shadow-primary/10 ring-1 ring-[color:var(--warning)]/30" : "border-border bg-card/60"}`}
               >
                 {i === 1 && (
-                  <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-[color:var(--warning)] px-3 py-1 text-[10px] font-bold uppercase text-[color:var(--warning-foreground,#2b1700)]">
+                  <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-[color:var(--warning)] px-3 py-1 text-[10px] font-bold uppercase text-[color:var(--warning-foreground)]">
                     <Crown className="h-3 w-3" /> Mais popular
                   </span>
                 )}

@@ -63,6 +63,7 @@
   --success: #22c55e;
   --danger: #ff3b30;
   --warning: #f2b705;
+  --warning-foreground: #2b1700;
   --cyan: #f2b705;
   --cyan-foreground: #2b1700;
 }

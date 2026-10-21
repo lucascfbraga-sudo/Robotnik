@@ -52,6 +52,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-background">
+        <div className="h-1 w-full bg-gradient-to-r from-primary via-[color:var(--warning)] to-primary" />
         <Header />
         <main>
           <Outlet />

@@ -40,31 +40,31 @@
   --font-sans: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* ROBOTNIK — dark premium, azul elétrico + ciano */
-  --background: #060a13;
-  --foreground: #e7edf7;
-  --card: #0d1424;
-  --card-foreground: #e7edf7;
-  --popover: #0d1424;
-  --popover-foreground: #e7edf7;
-  --primary: #2e6bff;
+  /* ROBOTNIK — tema Dr. Robotnik: preto, vermelho e dourado */
+  --background: #0a0806;
+  --foreground: #f3ece2;
+  --card: #15100d;
+  --card-foreground: #f3ece2;
+  --popover: #15100d;
+  --popover-foreground: #f3ece2;
+  --primary: #c81e1e;
   --primary-foreground: #ffffff;
-  --secondary: #121b2e;
-  --secondary-foreground: #c3d1e8;
-  --muted: #101827;
-  --muted-foreground: #7e8ca8;
-  --accent: #122233;
-  --accent-foreground: #9fe8f5;
-  --destructive: #f23749;
+  --secondary: #231713;
+  --secondary-foreground: #e4d2bd;
+  --muted: #1b1310;
+  --muted-foreground: #a89380;
+  --accent: #2a1a0d;
+  --accent-foreground: #f2b705;
+  --destructive: #ff3b30;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: #121b2e;
-  --ring: #2e6bff;
+  --border: rgba(255, 90, 90, 0.14);
+  --input: #231713;
+  --ring: #c81e1e;
   --success: #22c55e;
-  --danger: #f23749;
+  --danger: #ff3b30;
   --warning: #f2b705;
-  --cyan: #22d3ee;
-  --cyan-foreground: #04222a;
+  --cyan: #f2b705;
+  --cyan-foreground: #2b1700;
 }
 
 @layer base {
@@ -87,18 +87,18 @@
 }
 
 @utility skeleton {
-  background: linear-gradient(90deg, #0d1424 0%, #16213a 40%, #0d1424 80%);
+  background: linear-gradient(90deg, #15100d 0%, #241714 40%, #15100d 80%);
   background-size: 800px 100%;
   animation: shimmer 1.6s linear infinite;
   border-radius: 8px;
 }
 
 @utility glow-primary {
-  box-shadow: 0 0 0 1px rgba(46, 107, 255, 0.25), 0 8px 30px -8px rgba(46, 107, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(200, 30, 30, 0.35), 0 8px 30px -8px rgba(200, 30, 30, 0.55);
 }
 
 @utility text-gradient-electric {
-  background: linear-gradient(90deg, #2e6bff 0%, #22d3ee 100%);
+  background: linear-gradient(90deg, #ff4d4d 0%, #f2b705 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Download,
   Sparkles,
+  Crown,
 } from "lucide-react";
 import heroImg from "@/assets/robotnik-hero.webp";
 
@@ -90,7 +91,7 @@ function HomePage() {
           </div>
           <div className="relative">
             <div className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-2xl shadow-primary/10">
-              <img src={heroImg} alt="Ilustração do bot ROBOTNIK, um robô futurista azul elétrico com circuitos brilhantes" className="h-full w-full object-cover" loading="eager" />
+              <img src={heroImg} alt="Ilustração do Dr. ROBOTNIK, vilão robótico de óculos laranja, bigode e traje vermelho e preto com detalhes dourados" className="h-full w-full object-cover" loading="eager" />
             </div>
           </div>
         </div>
@@ -136,11 +137,11 @@ function HomePage() {
             {plans.map((p, i) => (
               <div
                 key={p.id}
-                className={`relative flex flex-col rounded-2xl border p-6 ${i === 1 ? "border-primary bg-card shadow-xl shadow-primary/10" : "border-border bg-card/60"}`}
+                className={`relative flex flex-col rounded-2xl border p-6 ${i === 1 ? "border-[color:var(--warning)]/60 bg-card shadow-xl shadow-primary/10 ring-1 ring-[color:var(--warning)]/30" : "border-border bg-card/60"}`}
               >
                 {i === 1 && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase text-primary-foreground">
-                    Mais popular
+                  <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-[color:var(--warning)] px-3 py-1 text-[10px] font-bold uppercase text-[color:var(--warning-foreground,#2b1700)]">
+                    <Crown className="h-3 w-3" /> Mais popular
                   </span>
                 )}
                 <h3 className="text-lg font-bold">{p.name}</h3>
